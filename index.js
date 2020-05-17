@@ -8,6 +8,9 @@ import cors from "@koa/cors";
 // import { renderAlpine } from "./src/compileToAlpine";
 // import { renderVue } from "./src/compileToVue.js";
 
+/**
+ * Write to a
+ */
 const writeVueFile = (code, fileName) =>
   writeFileSync(
     fileName,
@@ -33,20 +36,20 @@ app.use(cors());
 app.use(async (ctx) => {
   const now = new Date().getTime();
   const type = ctx.request.query.type;
+  // Should probably be a content-based hash instead of a timestamp
+  // Could also store/cache the examples and not generate+delete every time
   const fileName = `./tmp/${type}-${now}.js`;
   try {
     // generate file to import
     if (type === "vue") {
       writeVueFile(decodeURIComponent(ctx.request.query.code), fileName);
-      const { Component } = await import(fileName);
-      unlinkSync(fileName);
-      ctx.body = Component.toString();
     } else if (type === "alpine") {
       writeAlpineFile(decodeURIComponent(ctx.request.query.code), fileName);
-      const { Component } = await import(fileName);
-      unlinkSync(fileName);
-      ctx.body = Component.toString();
     }
+
+    const { Component } = await import(fileName);
+    unlinkSync(fileName);
+    ctx.body = Component.toString();
   } catch (err) {
     if (existsSync(fileName)) {
       unlinkSync(fileName);

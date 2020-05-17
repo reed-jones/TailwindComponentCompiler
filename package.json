@@ -16,6 +16,7 @@
     "tmp-promise": "^3.0.2"
   },
   "scripts": {
+    "dev": "nodemon --ignore './tmp/' --exec babel-node index.js",
     "start": "nodemon --ignore './tmp/' --exec babel-node index.js"
   }
 }
