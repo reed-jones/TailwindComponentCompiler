@@ -1,11 +1,3 @@
-import { JSDOM } from "jsdom";
-
-const dom = new JSDOM(
-  `<!DOCTYPE html><head></head><body><div id="app"></div></body>`,
-  { pretendToBeVisual: true }
-);
-const document = dom.window.document;
-
 const CUSTOM_TYPES = {
   TEXT_ELEMENT: "TEXT_ELEMENT",
 };

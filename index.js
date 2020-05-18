@@ -34,6 +34,12 @@ const app = new Koa();
 app.use(cors());
 
 app.use(async (ctx) => {
+  if (!ctx.request.query.type && !ctx.request.query.code) {
+    ctx.status = 200;
+    ctx.body = "Hi :) You where probably looking for this...";
+    return;
+  }
+
   const now = new Date().getTime();
   const type = ctx.request.query.type;
   // Should probably be a content-based hash instead of a timestamp
@@ -49,11 +55,17 @@ app.use(async (ctx) => {
 
     const { Component } = await import(fileName);
     unlinkSync(fileName);
+    ctx.type = "js";
     ctx.body = Component.toString();
+    return;
   } catch (err) {
     if (existsSync(fileName)) {
       unlinkSync(fileName);
     }
+
+    ctx.status = 500;
+    ctx.body = "Uh oh... That didn't seam to work";
+    return;
   }
 });
 
