@@ -57,7 +57,7 @@ app.use(async (ctx) => {
 
     const { Component } = await import(fileName);
     unlinkSync(fileName);
-    ctx.type = "plain";
+    ctx.type = "js";
     ctx.body = Component.toString();
     return;
   } catch (err) {
