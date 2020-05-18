@@ -1,6 +1,7 @@
 import Koa from "koa";
 import { readFileSync, writeFileSync, unlinkSync, existsSync } from "fs";
 import { resolve, join } from "path";
+import bodyParser from "koa-bodyparser";
 import cors from "@koa/cors";
 
 // import { Sample as SampleAlpine } from "./src/SampleComponentAlpine.js";
@@ -32,30 +33,31 @@ export const Component = ({ props }) => {
 
 const app = new Koa();
 app.use(cors());
+app.use(bodyParser());
 
 app.use(async (ctx) => {
-  if (!ctx.request.query.type && !ctx.request.query.code) {
+  if (!ctx.request.body.type && !ctx.request.body.code) {
     ctx.status = 200;
     ctx.body = "Hi :) You where probably looking for this...";
     return;
   }
 
   const now = new Date().getTime();
-  const type = ctx.request.query.type;
+  const type = ctx.request.body.type;
   // Should probably be a content-based hash instead of a timestamp
   // Could also store/cache the examples and not generate+delete every time
   const fileName = `./tmp/${type}-${now}.js`;
   try {
     // generate file to import
     if (type === "vue") {
-      writeVueFile(decodeURIComponent(ctx.request.query.code), fileName);
+      writeVueFile(decodeURIComponent(ctx.request.body.code), fileName);
     } else if (type === "alpine") {
-      writeAlpineFile(decodeURIComponent(ctx.request.query.code), fileName);
+      writeAlpineFile(decodeURIComponent(ctx.request.body.code), fileName);
     }
 
     const { Component } = await import(fileName);
     unlinkSync(fileName);
-    ctx.type = "js";
+    ctx.type = "plain";
     ctx.body = Component.toString();
     return;
   } catch (err) {

@@ -11,6 +11,7 @@
     "@koa/cors": "^3.0.0",
     "jsdom": "^16.2.2",
     "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "tmp-promise": "^3.0.2"
